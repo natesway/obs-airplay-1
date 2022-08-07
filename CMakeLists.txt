@@ -2,9 +2,15 @@ cmake_minimum_required(VERSION 3.16...3.21)
 
 # Change obs-plugintemplate to your plugin's name in a machine-readable format (e.g.:
 # obs-myawesomeplugin) and set
-project(obs-plugintemplate VERSION 1.0.0)
+project(obs-airplay VERSION 0.1.0)
 add_library(${CMAKE_PROJECT_NAME} MODULE)
 
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall  -fPIC" )
+set( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -Wall -O3 -fPIC" )
+
+add_subdirectory( deps/uxplay/lib/llhttp )
+add_subdirectory( deps/uxplay/lib/playfair )
+add_subdirectory( deps/uxplay/lib )
 # Replace `Your Name Here` with the name (yours or your organization's) you want to see as the
 # author of the plugin (in the plugin's metadata itself and in the installers)
 set(PLUGIN_AUTHOR "Your Name Here")
@@ -18,7 +24,7 @@ set(LINUX_MAINTAINER_EMAIL "me@mymailhost.com")
 
 # Add your custom source files here - header files are optional and only required for visibility
 # e.g. in Xcode or Visual Studio
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE src/plugin-main.c)
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE src/plugin-main.cpp src/airplay.cpp src/audio-decoder.cpp src/h264-decoder.cpp)
 
 # /!\ TAKE NOTE: No need to edit things past this point /!\
 
@@ -29,14 +35,15 @@ find_qt(COMPONENTS Widgets Core)
 
 configure_file(src/plugin-macros.h.in ${CMAKE_SOURCE_DIR}/src/plugin-macros.generated.h)
 
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE src/plugin-macros.generated.h)
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE src/plugin-macros.generated.h src/airplay.hpp src/audio-decoder.hpp src/h264-decoder.hpp)
 
 # --- Platform-independent build settings ---
 
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_SOURCE_DIR}/deps/uxplay/lib/)
 
+target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC airplay)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OBS::libobs OBS::obs-frontend-api Qt::Core
-                                                    Qt::Widgets)
+                                                    Qt::Widgets )
 
 set_target_properties(
   ${CMAKE_PROJECT_NAME}
@@ -44,7 +51,7 @@ set_target_properties(
              AUTOUIC ON
              AUTORCC ON)
 
-target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_17)
+target_compile_features(${CMAKE_PROJECT_NAME} PRIVATE cxx_std_20)
 
 # --- End of section ---
 

@@ -2,6 +2,10 @@
 
 ## Introduction
 
+TODO README
+
+Credits: https://github.com/mika314/obs-airplay
+
 This plugin is meant to make it easy to quickstart development of new OBS plugins. It includes:
 
 - The CMake project file
