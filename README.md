@@ -1,6 +1,6 @@
 # OBS Plugin Template
 
-## Introduction
+## Introductio
 
 TODO README
 
